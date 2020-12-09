@@ -26,7 +26,7 @@ function({
   return e;
 };
 
-const makeFile =  function(arr) {
+const makeProfile =  function(arr) {
   const htmlTemplate = render(arr);
   fs.writeFile(outputPath, htmlTemplate, function(err) {
     err ? console.log(err) : console.log("Success!");
@@ -93,7 +93,7 @@ const employees = [];
 async function addEmployee()  {
   const employee = await inquirer.prompt(questions);
   employees.push(newEmployee(employee));
-  employee.again ? addEmployee() : makeFile(employees);
+  employee.again ? addEmployee() : makeProfile(employees);
 };
 
 async function init()  {
