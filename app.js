@@ -9,9 +9,11 @@ const Manager = require("./Develop/lib/Manager");
 const Engineer = require("./Develop/lib/Engineer");
 const Intern = require("./Develop/lib/Intern");
 
-const newEmployee = ({
+const newEmployee = 
+ 
+function({
   name, id, email, officeNumber, github, school, employeeType,
-}) => {
+}){
   let e;
   if (!employeeType) {
     e = new Manager(name, id, email, officeNumber);
@@ -23,9 +25,9 @@ const newEmployee = ({
   return e;
 };
 
-const makeFile = (arr) => {
+const makeFile =  function(arr) {
   const htmlTemplate = render(arr);
-  fs.writeFile(outputPath, htmlTemplate, (err) => {
+  fs.writeFile(outputPath, htmlTemplate, function(err) {
     err ? console.log(err) : console.log("Success!");
   });
 };
@@ -52,12 +54,12 @@ const questions = [
   {
     name: "github",
     message: "Enter the employee's github username:",
-    when: (answers) => answers.employeeType === "Engineer",
+    when: function(answers) {answers.employeeType === "Engineer"},
   },
   {
     name: "school",
     message: "Enter the employee's school name:",
-    when: (answers) => answers.employeeType === "Intern",
+    when: function(answers) {answers.employeeType === "Intern"},
   },
   {
     name: "again",
@@ -87,13 +89,13 @@ const managerQs = [
 
 const employees = [];
 
-const addEmployee = async () => {
+async function addEmployee()  {
   const employee = await inquirer.prompt(questions);
   employees.push(newEmployee(employee));
   employee.another ? addEmployee() : makeFile(employees);
 };
 
-const init = async () => {
+async function init()  {
   const employee = await inquirer.prompt(managerQs);
   employees.push(newEmployee(employee));
   addEmployee();
