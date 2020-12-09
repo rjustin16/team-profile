@@ -8,6 +8,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const Manager = require("./Develop/lib/Manager");
 const Engineer = require("./Develop/lib/Engineer");
 const Intern = require("./Develop/lib/Intern");
+// const Employee = require("./Develop/lib/Employee");
 
 const newEmployee = 
  
@@ -54,12 +55,12 @@ const questions = [
   {
     name: "github",
     message: "Enter the employee's github username:",
-    when: function(answers) {answers.employeeType === "Engineer"},
+    when: (answers) => answers.employeeType === "Engineer",
   },
   {
     name: "school",
     message: "Enter the employee's school name:",
-    when: function(answers) {answers.employeeType === "Intern"},
+    when: (answers) => answers.employeeType === "Intern",
   },
   {
     name: "again",
@@ -92,7 +93,7 @@ const employees = [];
 async function addEmployee()  {
   const employee = await inquirer.prompt(questions);
   employees.push(newEmployee(employee));
-  employee.another ? addEmployee() : makeFile(employees);
+  employee.again ? addEmployee() : makeFile(employees);
 };
 
 async function init()  {
