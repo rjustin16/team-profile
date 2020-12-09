@@ -1,42 +1,101 @@
-// const Manager = require("./lib/Manager");
-// const Engineer = require("./lib/Engineer");
-// const Intern = require("./lib/Intern");
-// const inquirer = require("inquirer");
-// const path = require("path");
-// const fs = require("fs");
 
-// const OUTPUT_DIR = path.resolve(__dirname, "output");
-// const outputPath = path.join(OUTPUT_DIR, "team.html");
-
-// const render = require("./lib/htmlRenderer");
-
-// const employees = [
-//     new Intern(),
-//     new Manager()
-// ];
-
-// fs.writeFile(outputPath, render(employees))
-// console.log(render())
-
-
-
-const makeEmployee = require("./Develop/lib/makeEmployee");
-const makeFile = require("./Develop/lib/makeFile");
-const { questions, managerQs } = require("./Develop/lib/questions");
 const inquirer = require("inquirer");
+const path = require("path");
+const render = require("./Develop/lib/htmlRenderer");
+const fs = require("fs");
+const OUTPUT_DIR = path.resolve(__dirname, "./Develop/output");
+const outputPath = path.join(OUTPUT_DIR, "team.html");
+const Manager = require("./Develop/lib/Manager");
+const Engineer = require("./Develop/lib/Engineer");
+const Intern = require("./Develop/lib/Intern");
+
+const newEmployee = ({
+  name, id, email, officeNumber, github, school, employeeType,
+}) => {
+  let e;
+  if (!employeeType) {
+    e = new Manager(name, id, email, officeNumber);
+  } else if (employeeType === "Engineer") {
+    e = new Engineer(name, id, email, github);
+  } else if (employeeType === "Intern") {
+    e = new Intern(name, id, email, school);
+  }
+  return e;
+};
+
+const makeFile = (arr) => {
+  const htmlTemplate = render(arr);
+  fs.writeFile(outputPath, htmlTemplate, (err) => {
+    err ? console.log(err) : console.log("Success!");
+  });
+};
+
+const questions = [
+  {
+    name: "employeeType",
+    message: "Select type of employee: ",
+    type: "list",
+    choices: ["Engineer", "Intern", 'EXIT'],
+  },
+  {
+    name: "name",
+    message: "Enter the employee's name: ",
+  },
+  {
+    name: "id",
+    message: "Enter the employee's id: ",
+  },
+  {
+    name: "email",
+    message: "Enter the employee's email: ",
+  },
+  {
+    name: "github",
+    message: "Enter the employee's github username:",
+    when: (answers) => answers.employeeType === "Engineer",
+  },
+  {
+    name: "school",
+    message: "Enter the employee's school name:",
+    when: (answers) => answers.employeeType === "Intern",
+  },
+  {
+    name: "again",
+    message: "Would you like to continue? ",
+    type: "confirm",
+  },
+];
+
+const managerQs = [
+  {
+    name: "name",
+    message: "Enter the manager's name: ",
+  },
+  {
+    name: "id",
+    message: "Enter the manager's id: ",
+  },
+  {
+    name: "email",
+    message: "Enter the manager's email: ",
+  },
+  {
+    name: "officeNumber",
+    message: "Enter the manager's office number: ",
+  },
+];
 
 const employees = [];
 
 const addEmployee = async () => {
-  const person = await inquirer.prompt(questions);
-  employees.push(makeEmployee(person));
-  person.another ? addEmployee() : makeFile(employees);
+  const employee = await inquirer.prompt(questions);
+  employees.push(newEmployee(employee));
+  employee.another ? addEmployee() : makeFile(employees);
 };
 
 const init = async () => {
-  const person = await inquirer.prompt(managerQs);
-  employees.push(makeEmployee(person));
-  console.log("-----------------------------");
+  const employee = await inquirer.prompt(managerQs);
+  employees.push(newEmployee(employee));
   addEmployee();
 };
 
